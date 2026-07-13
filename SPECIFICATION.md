@@ -230,12 +230,12 @@ GASは少なくとも次の処理を提供する。
 
 ## 12. 音声配信
 
-- 音声ファイルはGitにcommitしない。
-- Google Drive上の実験専用フォルダに配置し、匿名閲覧可能なURLだけを刺激リストへ記載する。
-- Drive file IDとローカル生成元の対応を `data/audio_manifest.csv` で管理する。
-- GitHub Pages、GAS、Driveの各URLを混同せず、`config.js` に `stimuliUrl` と `gasEndpoint` を設定する。
+- 選択済み音声ファイルは通常Git objectとして `audio/<method>/<元basename>` にcommitし、GitHub Pagesから配信する。
+- Google Driveは候補音源のfile IDとローカル生成元の対応を `data/audio_manifest.csv` へ記録する管理元として使用し、本番の音声配信には使用しない。
+- `data/stimuli.json` はGitHub Pages上の相対URLだけを持ち、Drive URLと混在させない。
+- GitHub PagesとGASのURLを混同せず、`config.js` に `stimuliUrl` と `gasEndpoint` を設定する。
 - 公開後の音声差し替えは禁止し、変更時はmanifest versionを更新する。
-- Google Driveの配信制限により再生が不安定な場合、実験開始前に別の静的配信基盤へ移す。
+- 選択済み音源だけをcommitし、GitHub Pagesの公開site 1 GB上限を超えないことを更新ごとに検査する。
 
 ## 13. エラー時の動作
 
@@ -252,7 +252,7 @@ GASは少なくとも次の処理を提供する。
 
 - 刺激validatorが全件成功する。
 - 3手法のファイル数と重複が仕様どおりである。
-- Drive URL全件が匿名ブラウザから音声として取得できる。
+- GitHub Pagesの音声URL全件が匿名ブラウザから音声として取得できる。
 - 2ブラウザ以上から同時に割当要求し、同じセットが返らない。
 - 同一participantの割当再試行で同じleaseが返る。
 - 6時間未満のleaseは再利用されず、6時間超の未回答leaseだけ再利用される。
@@ -267,5 +267,5 @@ GASは少なくとも次の処理を提供する。
 - 手法間のサンプルは独立に抽出し、入力条件を揃えない。
 - セットleaseは参加者の同意後に取得する。
 - 6時間経過後の古い回答は破棄し、ブラウザではalert後に導入画面へ戻す。
-- Google Driveが不安定な場合は、手順を提示したうえでGoogle Cloud Storage等へ変更できる。
+- Google Driveはcross-site media requestが403になるため、本番音声はGitHub Pagesから配信する。
 - 回答送信は `no-cors`を使わず、hidden iframeへのform POSTと `postMessage()`でGASの受理結果を確認する。

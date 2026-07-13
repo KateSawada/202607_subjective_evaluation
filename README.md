@@ -13,7 +13,7 @@
 - 1参加者あたり合計12 responses
 - 初期66セットを用意し、必要時は既存セットを変えずに `set_067` 以降を追加可能
 - 1セットにつき有効回答は高々1件
-- 音声はGitでは管理せず、Google Driveから配信
+- 選択済み音声はこのrepoの `audio/` にcommitし、GitHub Pagesから同一originで配信
 - 同意後にGASから未使用または期限切れのセットを排他的に割り当てる
 - 開始前に想定所要時間15–20分と、中断せず最後まで実施することを案内する
 
@@ -28,14 +28,13 @@
 - GAS `DriveApp`からのDrive manifest生成
 - 独立抽出による66セット生成とvalidator
 - 既存セットを保持したまま追加セットを末尾へ加える `extend` コマンド
+- 選択済み音源をGitHub Pages用にコピーして相対URLへ切り替える `package` コマンド
 
 外部作業待ち:
 
-- 第2回SpreadsheetとGAS Web Appのdeploy
-- `js/config.js`の本番 `gasEndpoint` への切替
-- Drive匿名再生、GAS応答origin、同時lease、期限切れの実機試験
+- GitHub Pages上での全音源疎通、GAS応答origin、同時lease、期限切れの実機試験
 
-2026-07-13にDrive上の800本（Seq. Flow 200、Joint AR 400、Txt AR 200）から本番792本を選択し、`data/audio_manifest.csv`, `data/selected_audio_manifest.csv`, `data/stimuli.json` を生成・検証済み。`js/config.js`の `stimuliUrl` は本番 `data/stimuli.json` へ切替済みである。
+2026-07-13にDrive上の800本（Seq. Flow 200、Joint AR 400、Txt AR 200）から本番792本を選択し、`data/audio_manifest.csv`, `data/selected_audio_manifest.csv`, `data/stimuli.json` を生成・検証済み。選択済み792本は生成元から `audio/` へコピーし、刺激URLをGitHub Pages上の相対URLへ切替済みである。
 
 ## 音源
 
@@ -47,9 +46,9 @@
 
 2026-07-13の確認時点では、Seq. Flow 200本、Txt AR 200本、Joint ARは生成中で243本だった。66セットの本番manifest生成には、Seq. Flow 198本、Txt AR 198本、Joint AR 396本が必要である。
 
-## Google Driveへの音声配置手順
+## 音源候補のDrive管理とGitHub Pagesへの配置
 
-音声ファイルはGoogle Driveへ配置し、サイトの静的ファイルと生成済み `stimuli.json` はGitHub Pagesで配信する。Webサイトの動作はアップロード手段に依存しない。
+Google Driveは候補音源のfile IDとmanifestを作るための管理元として使用する。本番のHTML `<audio>` 配信には使用しない。`uc?export=download` は通常の匿名ダウンロードには成功するが、GitHub Pagesからのcross-site media requestを403で拒否するためである。
 
 1. 専用Google Drive内に、実験専用フォルダを作成する。推奨名は `202607_subjective_evaluation_audio`。
 2. その配下に `seq_flow/`, `joint_ar/`, `txt_ar/` の3フォルダを作成する。
@@ -57,14 +56,26 @@
 4. ファイル名は生成元のbasenameから変更せず、そのままDriveへ配置する。同名ファイルが手法間に存在しても、`seq_flow/`, `joint_ar/`, `txt_ar/` の別フォルダに置いて衝突を避ける。
 5. 音声フォルダまたは各音声ファイルの共有設定を「リンクを知っている全員が閲覧可」にする。編集権限は付与しない。
 6. アップロード完了後、GASの `refreshAudioManifestSheet()` を実行する。各ファイルのDrive file ID、resource key、公開URL、サイズがSpreadsheetの `audio_manifest` シートへ書き出される。
-7. `public_url` はブラウザのHTML `<audio>` から取得できるURLにする。候補は `https://drive.google.com/uc?export=download&id=<FILE_ID>` だが、本番採用前にRange request、リダイレクト、匿名ブラウザでの再生を実機確認する。
-8. `data/stimuli.json` の `sample_A` / `sample_B` には、Drive file IDから作った公開URLを記録する。生成元の `/Volumes/...` パスはWebへ公開しない。
-9. シークレットウィンドウで全URLに認証なしでアクセスできることを確認する。
+7. 本番セット生成後、親repo rootで `python scripts/data/prepare_subjective_evaluation_202607.py package` を実行する。
+8. `package` は `data/selected_audio_manifest.csv` の `source_path` から選択済み音源だけを `audio/<method>/<元basename>` へコピーし、サイズを検査する。
+9. `data/stimuli.json` と `data/selected_audio_manifest.csv` の公開URLを `audio/<method>/<元basename>` へ変更する。生成元の `/Volumes/...` パスはWebへ公開しない。
 10. GitHub Pages上で、少なくともChrome、Safari、Firefoxのデスクトップ版を使い、再生開始、最後までの再生、A/B排他制御を確認する。
-11. 本番前に全792 URL（198 + 396 + 198）へ軽量な疎通確認を行い、HTTP失敗、HTMLエラーページ、0 byte、重複file IDがないことを検査する。
-12. 本番開始後はDrive上のファイルを差し替えない。修正時は新しいfile IDを発行し、manifestと刺激リストを版管理する。
+11. 本番前に全792 URL（198 + 396 + 198）へ軽量な疎通確認を行い、HTTP失敗、0 byte、サイズ不一致がないことを検査する。
+12. 本番開始後は `audio/` の既存ファイルを差し替えない。修正時は新しいファイル名で追加し、manifestと刺激リストを版管理する。
 
-Google Driveは大量アクセス時の制限や音声ストリーミング挙動が変わる可能性がある。公開前試験で安定しない場合は、同じmanifest構造を保ったままGoogle Cloud Storage等の静的配信先へ切り替える。
+### GitHubの容量制限と本repoの使用量
+
+- 通常Gitの単一ファイルは100 MiB超で拒否され、50 MiB超で警告される。本番音源の最大は1,245,260 bytes（約1.19 MiB）。
+- 1回のpushは2 GiBが上限。本番792本は合計872,366,736 bytes（約832 MiB）のため、手法別commit・pushに分割する。
+- GitHub Pagesの公開siteは1 GBが上限。本repoの音源は約0.872 GBであり上限内だが余裕は小さいため、未選択音源はcommitしない。
+- Git LFSはGitHub Pagesで使用できないため、mp3は通常Git objectとして管理する。
+
+公式仕様:
+
+- [GitHubの大容量ファイル制限](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github)
+- [repositoryとpushの制限](https://docs.github.com/en/repositories/creating-and-managing-repositories/repository-limits)
+- [GitHub Pagesの制限](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
+- [Git LFSの制約](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-git-large-file-storage)
 
 ### Google Cloud Storageへ切り替える場合に実験実施者が行う操作
 
@@ -130,6 +141,8 @@ python scripts/data/prepare_subjective_evaluation_202607.py manifest \
 
 python scripts/data/prepare_subjective_evaluation_202607.py generate
 
+python scripts/data/prepare_subjective_evaluation_202607.py package
+
 python scripts/data/prepare_subjective_evaluation_202607.py validate
 ```
 
@@ -158,6 +171,8 @@ python scripts/data/prepare_subjective_evaluation_202607.py manifest \
 
 python scripts/data/prepare_subjective_evaluation_202607.py extend --sets N
 
+python scripts/data/prepare_subjective_evaluation_202607.py package
+
 python scripts/data/prepare_subjective_evaluation_202607.py validate
 ```
 
@@ -168,6 +183,7 @@ python scripts/data/prepare_subjective_evaluation_202607.py validate
 - `data/stimuli.json` の `set_001`〜追加前の最終setが変更されていない。
 - `set_067` 以降が欠番なく追加され、各setが両比較3 trialsずつを持つ。
 - `data/selected_audio_manifest.csv` は既存行を保持し、新規音源だけが末尾に増えている。
+- 新規選択音源が `audio/<method>/` に追加され、全刺激URLがGitHub Pages相対URLである。
 - GitHub Pagesの公開後にブラウザを再読み込みすると、`cache: "no-store"` で最新のセット一覧が取得される。
 
 GASはサイトから毎回送られる `set_ids` を割当候補とするため、Spreadsheetの初期化や既存割当行の変更は不要である。GASコードを初回だけ上限固定版から更新し、再deployしておけば、追加セットも従来と同じlease規則で割り当てられる。
@@ -216,13 +232,17 @@ GASはサイトから毎回送られる `set_ids` を割当候補とするため
 ├── js/
 │   ├── app.js
 │   └── config.js
+├── audio/
+│   ├── seq_flow/
+│   ├── joint_ar/
+│   └── txt_ar/
 └── data/
     ├── audio_manifest.csv
     ├── stimuli.example.json
     └── stimuli.json
 ```
 
-音声ファイル自体はこのリポジトリに置かない。`audio/` を作る場合もローカル確認用とし、`.gitignore` で除外する。
+`audio/` には `data/selected_audio_manifest.csv` で選択された音源だけを置く。未選択候補や生成元ディレクトリ全体はcommitしない。
 
 ## 公開前の主要チェック
 
@@ -236,5 +256,5 @@ GASはサイトから毎回送られる `set_ids` を割当候補とするため
 - 有効送信後のセットが再割当されない。
 - 有効回答済みセットが総セット数の90%に達した時、設定済みメールアドレスへ通知が一度だけ届く。
 - 全セット割当不可時に、参加者へ利用可能なセットがないことと実験実施者への問い合わせを案内する。
-- Drive音声を認証なしで最後まで再生できる。
+- GitHub Pages上の全音声を最後まで再生できる。
 - `gasEndpoint`, `stimuliUrl`, `experimentId` が本番値である。
