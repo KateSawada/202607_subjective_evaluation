@@ -361,7 +361,6 @@
       }
 
       function onMessage(event) {
-        if (event.source !== iframe.contentWindow) return;
         if (!isAllowedGasResponseOrigin(event.origin)) return;
         const data = event.data;
         if (!data || data.type !== "subjective_evaluation_gas_response" || data.response_nonce !== nonce) return;
