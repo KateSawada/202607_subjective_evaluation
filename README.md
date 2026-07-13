@@ -195,7 +195,10 @@ GASはサイトから毎回送られる `set_ids` を割当候補とするため
 1. Apps Script editor左側の `Project Settings` を開く。
 2. `Script Properties` の `Add script property` を選ぶ。
 3. Propertyに `NOTIFICATION_EMAIL`、Valueに通知先メールアドレスを設定して保存する。
-4. 更新した `Code.gs` でWeb Appを再deployし、追加されるメール送信権限を承認する。
+4. Apps Script editor上部の関数一覧から `sendNotificationTestEmail` を選択して実行する。
+5. メール送信権限の承認画面が表示された場合は内容を確認して承認する。表示されない場合でも、テストメールが届けば既に必要な権限が承認済みである。
+6. `NOTIFICATION_EMAIL` にテストメールが届くことを確認する。この関数は90%通知済み状態を変更しない。
+7. 更新した `Code.gs` でWeb Appを再deployする。
 
 総セット数は割当要求に含まれる最新の `set_ids` 件数から取得し、Script Property `CURRENT_TOTAL_SET_COUNT` へ自動記録する。古いページからの要求で総数が減らないよう、記録値は増加時だけ更新する。通知成功時は、そのときの総セット数が `LAST_NOTIFIED_TOTAL_SET_COUNT` に記録され、同じ総数について通知を繰り返さない。`set_067` 以降を追加して総数が増えた場合は、新しい総数の90%に達した時点で改めて通知する。これら2つのpropertyを手作業で作る必要はない。
 
