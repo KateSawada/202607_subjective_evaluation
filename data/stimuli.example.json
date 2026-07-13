@@ -1,0 +1,79 @@
+{
+  "experiment_id": "202607_subjective_evaluation",
+  "generation_seed": 20260713,
+  "audio_manifest_version": "example",
+  "drive_root_folder_id": "1a8NatenMw3nw_0_ka1VBep6wKgh3U7yy",
+  "sets": [
+    {
+      "set_id": "set_001",
+      "trials": [
+        {
+          "trial_id": "txt_ar_vs_joint_ar_001",
+          "comparison_id": "txt_ar_vs_joint_ar",
+          "sample_pair_id": "txt_ar_vs_joint_ar_pair_001",
+          "length": "32bars",
+          "method_1": "txt_ar",
+          "method_2": "joint_ar",
+          "sample_1": "https://drive.google.com/uc?export=download&id=TXT_AR_FILE_ID_001",
+          "sample_2": "https://drive.google.com/uc?export=download&id=JOINT_AR_FILE_ID_001",
+          "questions": ["global_structure", "local_naturalness"]
+        },
+        {
+          "trial_id": "txt_ar_vs_joint_ar_002",
+          "comparison_id": "txt_ar_vs_joint_ar",
+          "sample_pair_id": "txt_ar_vs_joint_ar_pair_002",
+          "length": "32bars",
+          "method_1": "txt_ar",
+          "method_2": "joint_ar",
+          "sample_1": "https://drive.google.com/uc?export=download&id=TXT_AR_FILE_ID_002",
+          "sample_2": "https://drive.google.com/uc?export=download&id=JOINT_AR_FILE_ID_002",
+          "questions": ["global_structure", "local_naturalness"]
+        },
+        {
+          "trial_id": "txt_ar_vs_joint_ar_003",
+          "comparison_id": "txt_ar_vs_joint_ar",
+          "sample_pair_id": "txt_ar_vs_joint_ar_pair_003",
+          "length": "32bars",
+          "method_1": "txt_ar",
+          "method_2": "joint_ar",
+          "sample_1": "https://drive.google.com/uc?export=download&id=TXT_AR_FILE_ID_003",
+          "sample_2": "https://drive.google.com/uc?export=download&id=JOINT_AR_FILE_ID_003",
+          "questions": ["global_structure", "local_naturalness"]
+        },
+        {
+          "trial_id": "seq_flow_vs_joint_ar_001",
+          "comparison_id": "seq_flow_vs_joint_ar",
+          "sample_pair_id": "seq_flow_vs_joint_ar_pair_001",
+          "length": "32bars",
+          "method_1": "seq_flow",
+          "method_2": "joint_ar",
+          "sample_1": "https://drive.google.com/uc?export=download&id=SEQ_FLOW_FILE_ID_001",
+          "sample_2": "https://drive.google.com/uc?export=download&id=JOINT_AR_FILE_ID_004",
+          "questions": ["global_structure", "local_naturalness"]
+        },
+        {
+          "trial_id": "seq_flow_vs_joint_ar_002",
+          "comparison_id": "seq_flow_vs_joint_ar",
+          "sample_pair_id": "seq_flow_vs_joint_ar_pair_002",
+          "length": "32bars",
+          "method_1": "seq_flow",
+          "method_2": "joint_ar",
+          "sample_1": "https://drive.google.com/uc?export=download&id=SEQ_FLOW_FILE_ID_002",
+          "sample_2": "https://drive.google.com/uc?export=download&id=JOINT_AR_FILE_ID_005",
+          "questions": ["global_structure", "local_naturalness"]
+        },
+        {
+          "trial_id": "seq_flow_vs_joint_ar_003",
+          "comparison_id": "seq_flow_vs_joint_ar",
+          "sample_pair_id": "seq_flow_vs_joint_ar_pair_003",
+          "length": "32bars",
+          "method_1": "seq_flow",
+          "method_2": "joint_ar",
+          "sample_1": "https://drive.google.com/uc?export=download&id=SEQ_FLOW_FILE_ID_003",
+          "sample_2": "https://drive.google.com/uc?export=download&id=JOINT_AR_FILE_ID_006",
+          "questions": ["global_structure", "local_naturalness"]
+        }
+      ]
+    }
+  ]
+}

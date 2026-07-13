@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>音楽の主観評価実験</title>
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Subjective Evaluation</p>
+          <h1>音楽の主観評価実験</h1>
+        </div>
+        <div class="progress" aria-live="polite">
+          <span id="progressLabel">準備中</span>
+          <div class="progress-track" aria-hidden="true">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </div>
+      </header>
+
+      <section id="screenIntro" class="screen active">
+        <div class="panel">
+          <h2>はじめに</h2>
+          <div class="instruction-block">
+            <p>本実験では，音楽経験などに関するアンケートと，提示される音楽に対するアンケートに回答をしていただきます．所要時間は全部で15〜20分程度です．</p>
+            <p>本実験は静かな環境でパソコン/ノートパソコン上で，イヤホンまたはヘッドフォンを使って参加してください（スマートフォンまたはタブレット端末等では参加できません）．</p>
+            <p>データを分析する際，個人情報を削除し，個人が特定できないように処理を行います．</p>
+            <p>研究の成果は，個人が特定されないように処理を行った上で，学会や学術雑誌およびデータベース等で公表されることがあります．</p>
+            <p><strong>実験開始後は中断せず，15〜20分程度の実験を一度に最後まで実施してください．</strong></p>
+            <p>上記に同意する場合は，「同意して次へ」を押して実験に進んでください．同意しない場合は，そのままこのページを閉じてください．</p>
+            <p>注意: 実験中はページの再読み込み，前に戻る操作，長時間の中断をしないでください．</p>
+            <p>実験実施者 名古屋大学情報学研究科知能システム学専攻 澤田桂都 (sawada.keito(at)g.sp.m.is.nagoya-u.ac.jp)</p>
+          </div>
+          <div id="resumeWarning" class="warning hidden"></div>
+          <div class="actions">
+            <button id="startButton" class="primary" type="button">同意して次へ</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="screenProfile" class="screen">
+        <div class="panel">
+          <h2>音楽経験などに関するアンケート</h2>
+          <form id="profileForm" class="form-grid">
+            <fieldset>
+              <legend>あなたは，高校や大学などで音楽に関わる分野(音楽学, 作曲, 楽器演奏, 音楽環境など)を専攻していますか? または，専攻していましたか?</legend>
+              <label><input type="radio" name="music_major" value="yes" required> Yes</label>
+              <label><input type="radio" name="music_major" value="no"> No</label>
+            </fieldset>
+            <fieldset>
+              <legend>あなたはこれまでに3年以上のピアノ演奏の経験がありますか? 師事の経験だけでなく，趣味や独学も含みます．</legend>
+              <label><input type="radio" name="piano_experience" value="yes" required> Yes</label>
+              <label><input type="radio" name="piano_experience" value="no"> No</label>
+            </fieldset>
+            <fieldset>
+              <legend>あなたはこれまでに3年以上の作曲または編曲の経験がありますか? 師事の経験だけでなく，趣味や独学も含みます．</legend>
+              <label><input type="radio" name="composition_experience" value="yes" required> Yes</label>
+              <label><input type="radio" name="composition_experience" value="no"> No</label>
+            </fieldset>
+            <div class="actions">
+              <button class="primary" type="submit">実験を開始</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="screenTrial" class="screen">
+        <div class="panel">
+          <div class="trial-heading">
+            <div>
+              <p id="trialMeta" class="eyebrow">Trial</p>
+              <h2 id="trialTitle">音楽を聴いて回答してください</h2>
+            </div>
+            <button id="issueButton" class="secondary" type="button">再生に問題があった</button>
+          </div>
+
+          <div class="listen-note">
+            <p>曲Aと曲Bを最後まで聴いてから回答してください。迷う場合も，より近いと感じる方を選んでください。</p>
+            <p>再生に問題がある場合は「再生に問題があった」ボタンを押してください。</p>
+            <p>楽曲のBPMは120です（1小節=2秒）</p>
+          </div>
+
+          <div class="players">
+            <article class="player-card">
+              <h3>曲A</h3>
+              <div class="player-audio-slot">
+                <audio id="audioA" controls preload="metadata"></audio>
+                <p id="audioABlocked" class="playback-blocked hidden" aria-live="polite"></p>
+              </div>
+            </article>
+            <article class="player-card">
+              <h3>曲B</h3>
+              <div class="player-audio-slot">
+                <audio id="audioB" controls preload="metadata"></audio>
+                <p id="audioBBlocked" class="playback-blocked hidden" aria-live="polite"></p>
+              </div>
+            </article>
+          </div>
+
+          <form id="trialForm" class="questions"></form>
+
+          <div class="actions">
+            <button id="nextTrialButton" class="primary" type="button" disabled>次へ</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="screenDone" class="screen">
+        <div class="panel">
+          <h2 id="doneTitle">回答の送信が終わりました</h2>
+          <p id="doneMessage">実験へのご協力ありがとうございました。このページを閉じてOKです。</p>
+          <div id="submissionStatus" class="submission-status"></div>
+          <div class="actions">
+            <button id="retrySubmitButton" class="primary hidden" type="button">回答送信を再試行</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="loadingOverlay" class="loading-overlay hidden" role="status" aria-live="polite" aria-busy="true">
+      <div class="loading-indicator" aria-hidden="true"></div>
+      <p>読み込み中・・・</p>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
