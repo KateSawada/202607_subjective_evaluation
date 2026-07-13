@@ -163,7 +163,7 @@
       ? { A: trial.sample_2, B: trial.sample_1, method_A: trial.method_2, method_B: trial.method_1 }
       : { A: trial.sample_1, B: trial.sample_2, method_A: trial.method_1, method_B: trial.method_2 };
     trial.rendered = pair;
-    document.getElementById("trialMeta").textContent = `${trial.trial_id} / ${trial.length}`;
+    document.getElementById("trialMeta").textContent = `比較 ${index + 1} / ${state.trials.length}`;
     document.getElementById("trialTitle").textContent = trial.title || "同じ2曲について，2つの観点から比較してください";
     audioA.src = pair.A;
     audioB.src = pair.B;
