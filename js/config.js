@@ -1,7 +1,7 @@
 window.EXPERIMENT_CONFIG = {
   experimentId: "202607_subjective_evaluation",
   gasEndpoint:
-    "https://script.google.com/macros/s/AKfycbxDrhs4kiJUB9VuRRRKnN1Oml9dVFeDzrgW-me7qZcNEMRB7kcBsZWWzDg3wdY3Gqjl/exec",
+    "https://script.google.com/macros/s/AKfycbzZlIm3q-q63n81MMXbQxegZwUA9Q1FHQYpNzCAVZTZsNkNUsxZfbMvvfIlM_tMJcU/exec",
   stimuliUrl: "data/stimuli.json",
   driveRootFolderId: "1a8NatenMw3nw_0_ka1VBep6wKgh3U7yy",
   parentOrigin: window.location.origin,
