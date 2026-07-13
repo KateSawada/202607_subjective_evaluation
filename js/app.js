@@ -76,7 +76,7 @@
 
   function enforceDesktop() {
     if (!config.requireDesktop || !window.matchMedia("(max-width: 959px)").matches) return;
-    showIntroError("この実験はパソコン/ノートパソコン上で参加してください。スマートフォンまたはタブレット端末では参加できません。");
+    showIntroError("この実験はパソコン/ノートパソコン上で参加してください。パソコンを使用している場合は，ブラウザのウィンドウを広げてからページを再読み込みしてください。スマートフォンまたはタブレット端末では参加できません。");
   }
 
   async function fetchStimuli() {
