@@ -11,7 +11,8 @@
 - 1参加者あたり各比較3 trials、合計6 trials
 - 各trialで `global_structure` と `local_naturalness` の2問に回答
 - 1参加者あたり合計12 responses
-- 66セットを用意し、1セットにつき有効回答は高々1件
+- 初期66セットを用意し、必要時は既存セットを変えずに `set_067` 以降を追加可能
+- 1セットにつき有効回答は高々1件
 - 音声はGitでは管理せず、Google Driveから配信
 - 同意後にGASから未使用または期限切れのセットを排他的に割り当てる
 - 開始前に想定所要時間15–20分と、中断せず最後まで実施することを案内する
@@ -26,6 +27,7 @@
 - 送信timeout時の同一 `submission_id` による再試行
 - GAS `DriveApp`からのDrive manifest生成
 - 独立抽出による66セット生成とvalidator
+- 既存セットを保持したまま追加セットを末尾へ加える `extend` コマンド
 
 外部作業待ち:
 
@@ -137,6 +139,37 @@ python scripts/data/prepare_subjective_evaluation_202607.py validate
 
 `manifest`はGAS出力CSVを検査・正規化し、Drive上のファイル名を変更せずにローカル生成元basenameとの対応を記録する。`generate`は固定seed `20260713`で手法ごとに独立抽出する。Joint ARが396本未満、Seq. Flow/Txt ARが198本未満の場合は生成を停止し、不足数をエラー表示する。
 
+### `set_067` 以降を追加する手順
+
+本番開始後は `generate` を再実行しない。`generate` は初期66セットの作成専用であり、再実行すると既存セットの対応が変わる可能性がある。追加には必ず `extend` を使う。
+
+追加1セットあたり、未使用のSeq. Flow 3本、Txt AR 3本、Joint AR 6本が必要である。現在の800本だけでは未使用が2/2/4本のため、1セットも追加できない。追加するセット数をNとすると、現在のmanifestに対して新たに必要な本数はSeq. Flow `max(0, 3N - 2)` 本、Txt AR `max(0, 3N - 2)` 本、Joint AR `max(0, 6N - 4)` 本である。今後さらに追加した後は、各手法の未使用本数を差し引いて計算する。
+
+1. Driveの既存 `seq_flow/`, `joint_ar/`, `txt_ar/` に追加音源を置く。ファイル名は変更しない。同じ手法フォルダ内では既存ファイルと重複しない名前にする。
+2. Apps Script editorで `refreshAudioManifestSheet()` を再実行する。
+3. Spreadsheetの `audio_manifest` シートをCSVでダウンロードする。
+4. 親repoのrootで次を実行する。`N` は追加セット数に置き換える。
+
+```bash
+python scripts/data/prepare_subjective_evaluation_202607.py manifest \
+  /path/to/audio_manifest.csv
+
+python scripts/data/prepare_subjective_evaluation_202607.py extend --sets N
+
+python scripts/data/prepare_subjective_evaluation_202607.py validate
+```
+
+`extend` は `data/audio_manifest.csv` のうち `data/selected_audio_manifest.csv` にないDrive file IDとURLだけから独立抽出し、次の連番セットを追加する。既存の `sets` 配列要素は変更せず、選択済みmanifestにも新規行だけを追記する。seedを明示する場合は `--seed INTEGER` を指定し、未指定時は `20260713 + 追加前のset数` を使用する。実行前に必要数が不足していれば、出力ファイルを変更せず停止する。
+
+実行後はdiffで次を確認してからcommit・pushする。
+
+- `data/stimuli.json` の `set_001`〜追加前の最終setが変更されていない。
+- `set_067` 以降が欠番なく追加され、各setが両比較3 trialsずつを持つ。
+- `data/selected_audio_manifest.csv` は既存行を保持し、新規音源だけが末尾に増えている。
+- GitHub Pagesの公開後にブラウザを再読み込みすると、`cache: "no-store"` で最新のセット一覧が取得される。
+
+GASはサイトから毎回送られる `set_ids` を割当候補とするため、Spreadsheetの初期化や既存割当行の変更は不要である。GASコードを初回だけ上限固定版から更新し、再deployしておけば、追加セットも従来と同じlease規則で割り当てられる。
+
 本番生成後、`js/config.js`の `stimuliUrl` を `data/stimuli.json` に変更する。Driveの親フォルダIDは既に `1a8NatenMw3nw_0_ka1VBep6wKgh3U7yy` として設定済みである。
 
 ## GASの配置
@@ -176,7 +209,7 @@ python scripts/data/prepare_subjective_evaluation_202607.py validate
 ## 公開前の主要チェック
 
 - Joint ARが396本以上あり、選択した全ファイルが正常に再生できる。
-- 66セット、各6 trials、各比較3 trials、各trial 2 questionsである。
+- 初期66セット（追加時はそれ以上）、各6 trials、各比較3 trials、各trial 2 questionsである。
 - 全セットを通じて同一音声URLが重複していない。
 - GASの同時割当試験で同一セットが二重にleaseされない。
 - 6時間を過ぎた未回答leaseだけが再利用される。
