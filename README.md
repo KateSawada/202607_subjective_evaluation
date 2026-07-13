@@ -33,9 +33,9 @@
 1. 専用Google Drive内に、実験専用フォルダを作成する。推奨名は `202607_subjective_evaluation_audio`。
 2. その配下に `seq_flow/`, `joint_ar/`, `txt_ar/` の3フォルダを作成する。
 3. セット生成スクリプトが選んだファイルだけをアップロードする。必要数はそれぞれ198、396、198本であり、生成元の全ファイルを無条件にアップロードしない。
-4. ファイル名は衝突防止と監査のため、manifestで使う一意な公開名へ変換する。推奨形式は `<method>_<source_index>_<source_basename>.mp3`。
+4. ファイル名は生成元のbasenameから変更せず、そのままDriveへ配置する。同名ファイルが手法間に存在しても、`seq_flow/`, `joint_ar/`, `txt_ar/` の別フォルダに置いて衝突を避ける。
 5. 音声フォルダまたは各音声ファイルの共有設定を「リンクを知っている全員が閲覧可」にする。編集権限は付与しない。
-6. 各ファイルのDrive file IDを取得し、`data/audio_manifest.csv` に `method`, `source_path`, `source_basename`, `drive_file_id`, `public_url`, `size_bytes` を保存する。アクセストークンや個人情報は保存しない。
+6. 各ファイルのDrive file IDを取得し、`data/audio_manifest.csv` に `method`, `source_path`, `source_basename`, `drive_folder`, `drive_file_id`, `public_url`, `size_bytes` を保存する。`source_basename` はDrive上のファイル名と一致させる。アクセストークンや個人情報は保存しない。
 7. `public_url` はブラウザのHTML `<audio>` から取得できるURLにする。候補は `https://drive.google.com/uc?export=download&id=<FILE_ID>` だが、本番採用前にRange request、リダイレクト、匿名ブラウザでの再生を実機確認する。
 8. `data/stimuli.json` の `sample_A` / `sample_B` には、Drive file IDから作った公開URLを記録する。生成元の `/Volumes/...` パスはWebへ公開しない。
 9. シークレットウィンドウで全URLに認証なしでアクセスできることを確認する。
