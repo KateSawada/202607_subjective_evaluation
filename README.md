@@ -29,12 +29,11 @@
 
 外部作業待ち:
 
-- 3フォルダへのアップロード完了
-- Joint AR 396本以上の確認
-- 本番manifestと `data/stimuli.json` の生成
 - 第2回SpreadsheetとGAS Web Appのdeploy
-- `js/config.js`の本番 `gasEndpoint` と `stimuliUrl` への切替
+- `js/config.js`の本番 `gasEndpoint` への切替
 - Drive匿名再生、GAS応答origin、同時lease、期限切れの実機試験
+
+2026-07-13にDrive上の800本（Seq. Flow 200、Joint AR 400、Txt AR 200）から本番792本を選択し、`data/audio_manifest.csv`, `data/selected_audio_manifest.csv`, `data/stimuli.json` を生成・検証済み。`js/config.js`の `stimuliUrl` は本番 `data/stimuli.json` へ切替済みである。
 
 ## 音源
 
