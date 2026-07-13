@@ -114,7 +114,7 @@
       showScreen("profile");
     } catch (error) {
       const message = String(error.message || error) === "no_set_available"
-        ? "現在利用できる実験セットがありません。時間をおいて再度お試しください。"
+        ? "現在利用可能な実験セットがありません。お手数ですが、実験実施者にお問い合わせください。"
         : "実験セットを割り当てられませんでした。通信環境を確認して再度お試しください。";
       showIntroError(message);
       console.error(error);

@@ -186,6 +186,19 @@ GASはサイトから毎回送られる `set_ids` を割当候補とするため
 8. deployment URLを `js/config.js` の `gasEndpoint` に設定する。
 9. test deploymentで割当、6時間期限、重複送信、iframe応答originを確認する。
 
+### 60セット回答時のメール通知
+
+有効回答が保存され、`submitted` になった一意なセット数が60件以上に達した時点で、GASは実験実施者へメールを一度だけ送る。期限内に回答されず再利用可能になったleaseはカウントしない。通知失敗によって参加者の回答保存を失敗させないため、送信エラーはGASのexecution logへ記録し、次の有効回答時に再試行する。
+
+通知先はコードへ記録せず、Apps Script projectのScript Propertyに設定する。
+
+1. Apps Script editor左側の `Project Settings` を開く。
+2. `Script Properties` の `Add script property` を選ぶ。
+3. Propertyに `NOTIFICATION_EMAIL`、Valueに通知先メールアドレスを設定して保存する。
+4. 更新した `Code.gs` でWeb Appを再deployし、追加されるメール送信権限を承認する。
+
+送信成功時はScript Property `SET_USAGE_60_NOTIFICATION_SENT=true` が自動設定され、61件目以降に同じ通知を繰り返さない。テスト等でこのpropertyを手動作成していた場合は、本番開始前に削除する。閾値は `CONFIG.notificationThreshold` の60である。
+
 ## 想定するリポジトリ構成
 
 ```text
@@ -216,5 +229,7 @@ GASはサイトから毎回送られる `set_ids` を割当候補とするため
 - 期限切れleaseの古い `assignment_token` による送信が拒否される。
 - 6時間経過をブラウザが検知するとalertを表示し、状態を破棄して導入画面へ戻る。
 - 有効送信後のセットが再割当されない。
+- 60セットの有効回答完了時に設定済みメールアドレスへ通知が一度だけ届く。
+- 全セット割当不可時に、参加者へ利用可能なセットがないことと実験実施者への問い合わせを案内する。
 - Drive音声を認証なしで最後まで再生できる。
 - `gasEndpoint`, `stimuliUrl`, `experimentId` が本番値である。
